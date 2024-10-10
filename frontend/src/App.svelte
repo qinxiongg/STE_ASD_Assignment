@@ -1,7 +1,6 @@
 <script>
   import axios from 'axios';
   import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,13 +10,21 @@
   let currentPage = 1;
   let totalPages = 0;
   const limitPerPage = 10;
+  let searchTerm = '';
+  let searchFlag = false;
 
   const handleFileUpload = (event) => {
     file = event.target.files[0];
   };
   function changePage(newPage) {
-    if (newPage >= 1 && newPage <= totalPages) {
-      DisplayData(newPage);
+    if (searchFlag === false) {
+      if (newPage >= 1 && newPage <= totalPages) {
+        DisplayData(newPage);
+      }
+    } else if (searchFlag === true) {
+      if (newPage >= 1 && newPage <= totalPages) {
+        SearchData(newPage);
+      }
     }
   }
 
@@ -60,6 +67,32 @@
     }
   };
 
+  const SearchData = async (page = 1) => {
+    console.log('Search term:', searchTerm);
+    searchFlag = true;
+    try {
+      const response = await axios.post(
+        `${API_URL}/SearchData`,
+        {
+          searchTerm: searchTerm,
+          page: page,
+          limitPerPage: limitPerPage,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      data = response.data.data;
+      totalCount = response.data.totalCount;
+      currentPage = response.data.currentPage;
+      totalPages = response.data.totalPages;
+    } catch (error) {
+      console.error('Error searching:', error);
+    }
+  };
+
   onMount(async () => {
     await DisplayData();
   });
@@ -71,6 +104,11 @@
       <p>Upload a CSV file</p>
       <input type="file" accept=".csv" on:change={handleFileUpload} />
       <input type="submit" />
+    </form>
+    <form on:submit|preventDefault={() => SearchData(currentPage)}>
+      <p>Search for a keyword:</p>
+      <input type="text" bind:value={searchTerm} placeholder="Enter a keyword here" />
+      <button type="submit">Search</button>
     </form>
   </div>
 </main>
@@ -114,6 +152,7 @@
 <style>
   .upload-form {
     margin-bottom: 20px;
+    display: flex;
   }
   tbody {
     height: 500px;
@@ -121,8 +160,10 @@
   .pagination-buttons {
     text-align: center;
   }
-  .totalCount{ 
+  .totalCount {
     text-align: center;
   }
-  
+  form {
+    margin-right: 30px;
+  }
 </style>
