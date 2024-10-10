@@ -24,3 +24,5 @@ Backend:
 2. run ```npm install``` at ```backend``` and ```frontend```.
 3. Create a MySQL schema and table using the SQL command found in ```backend/database/db.sql```.
 4. Change ```DB_USER``` and ```DB_PASSWORD``` value in ```backend/.env``` according to your MySQL user credentials.
+5. Run ```npm run dev``` at ```frontend``` and ```nodemon app.js``` or ```node app.js``` at ```frontend```.
+6. Navigate to your ```localhost```, upload the CSV file and click on submit.
