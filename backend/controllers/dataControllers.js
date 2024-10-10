@@ -107,8 +107,5 @@ const SearchData = async (req, reply) => {
   }
 };
 
-const SortData = async(req, reply) => {
 
-}
-
-module.exports = { UploadData, DisplayData, SearchData, SortData };
+module.exports = { UploadData, DisplayData, SearchData };
