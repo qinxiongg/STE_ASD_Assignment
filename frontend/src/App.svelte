@@ -7,11 +7,19 @@
 
   let file;
   let data = [];
+  let totalCount = 0;
+  let currentPage = 1;
+  let totalPages = 0;
+  const limitPerPage = 10;
 
   const handleFileUpload = (event) => {
     file = event.target.files[0];
-    console.log('selected:', file);
   };
+  function changePage(newPage) {
+    if (newPage >= 1 && newPage <= totalPages) {
+      DisplayData(newPage);
+    }
+  }
 
   const UploadData = async () => {
     if (!file) {
@@ -34,10 +42,19 @@
     }
   };
 
-  const DisplayData = async () => {
+  const DisplayData = async (page = 1) => {
     try {
-      const response = await axios.get(`${API_URL}/DisplayData`);
-      data = response.data;
+      const response = await axios.post(`${API_URL}/DisplayData`, {
+        page: page,
+        limitPerPage: limitPerPage,
+      });
+      // console.log('response', response);
+      // data = response.data;
+
+      data = response.data.data;
+      totalCount = response.data.totalCount;
+      currentPage = response.data.currentPage;
+      totalPages = response.data.totalPages;
     } catch (error) {
       console.error('Error displaying data:', error);
     }
@@ -49,7 +66,7 @@
 </script>
 
 <main>
-  <div>
+  <div class="upload-form">
     <form on:submit|preventDefault={UploadData}>
       <p>Upload a CSV file</p>
       <input type="file" accept=".csv" on:change={handleFileUpload} />
@@ -81,5 +98,31 @@
   </tbody>
 </table>
 
+<div class="pagination-buttons">
+  <button on:click={() => changePage(1)} disabled={currentPage === 1}>First</button>
+  <button on:click={() => changePage(currentPage - 1)} disabled={currentPage === 1}>Previous</button
+  >
+  <span>Page {currentPage} of {totalPages}</span>
+  <button on:click={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}
+    >Next</button
+  >
+  <button on:click={() => changePage(totalPages)} disabled={currentPage === totalPages}>Last</button
+  >
+</div>
+<p class="totalCount">Total: {totalCount} results</p>
+
 <style>
+  .upload-form {
+    margin-bottom: 20px;
+  }
+  tbody {
+    height: 500px;
+  }
+  .pagination-buttons {
+    text-align: center;
+  }
+  .totalCount{ 
+    text-align: center;
+  }
+  
 </style>

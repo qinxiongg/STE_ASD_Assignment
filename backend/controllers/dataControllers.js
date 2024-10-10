@@ -57,8 +57,26 @@ const DisplayData = async (req, reply) => {
   const dataRepository = AppDataSource.getRepository(DataModel);
 
   try {
-    const data = await dataRepository.find();
-    return reply.code(200).send(data);
+    // const data = await dataRepository.find();
+    // return reply.code(200).send(data);
+
+    // Get page and limitPerPage from query params, set defaults if not provided
+    const page = parseInt(req.body.page);
+    const limitPerPage = parseInt(req.body.limitPerPage);
+    const offset = (page - 1) * limitPerPage;
+
+    // Fetch data with limitPerPage and offset
+    const [data, totalCount] = await dataRepository.findAndCount({
+      skip: offset,
+      take: limitPerPage,
+    });
+
+    reply.send({
+      data,
+      totalCount, // Total number of rows in the table
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limitPerPage),
+    });
   } catch (error) {
     reply.code(500).send({ error: 'Unable to fetch data.' });
   }

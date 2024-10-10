@@ -3,7 +3,7 @@ const dataController = require('../controllers/dataControllers');
 
 const dataRoutes = async (fastify, options) => {
   fastify.post('/api/UploadData', dataController.UploadData);
-  fastify.get('/api/DisplayData', dataController.DisplayData);
+  fastify.post('/api/DisplayData', dataController.DisplayData);
 };
 
 module.exports = dataRoutes;
