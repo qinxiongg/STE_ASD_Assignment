@@ -1,8 +1,9 @@
 const fastify = require('fastify')({ logger: true });
 const fastifyCors = require('@fastify/cors');
-const dataController = require('./controllers/dataControllers');
+// const dataController = require('./controllers/dataControllers');
 const fastifyMultipart = require('@fastify/multipart');
 const AppDataSource = require('./ormconfig');
+const dataRoutes = require('./routes/dataRoutes');
 
 // initalise data source
 AppDataSource.initialize()
@@ -18,11 +19,10 @@ fastify.register(fastifyCors, {
   methods: ['GET', 'POST'],
 });
 
-fastify.register(fastifyMultipart, {
-  addToBody: true,
-});
+fastify.register(fastifyMultipart);
 
-fastify.post('/api/UploadData', dataController.UploadData);
+// all routes kept in dataroutes.js
+fastify.register(dataRoutes);
 
 fastify.listen({ port: 3000 }, (err, address) => {
   if (err) throw err;

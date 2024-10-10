@@ -5,6 +5,8 @@ module.exports = new EntitySchema({
   columns: {
     postId: {
       type: 'int',
+      primary: true,
+      generated: false,
     },
     id: {
       primary: true,
@@ -12,13 +14,16 @@ module.exports = new EntitySchema({
       generated: false,
     },
     name: {
-      type: 'string',
+      type: 'varchar',
+      nullable: true,
     },
     email: {
-      type: 'string',
+      type: 'varchar',
+      nullable: true,
     },
     body: {
-      type: 'string',
+      type: 'mediumtext',
+      nullable: true,
     },
   },
 });

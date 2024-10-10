@@ -1,12 +1,16 @@
 const { DataSource } = require('typeorm');
-const dataModel = require('./models/dataModel');    
+const DataModel = require('./models/DataModel');
 
 const AppDataSource = new DataSource({
-  type: 'mongodb',
-  url: 'mongodb://localhost:27017/data',
-  useUnifiedTopology: true,
-  synchronize: true,
-  entities: [dataModel],
+  type: 'mysql',
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: 'root',
+  database: 'asd_assignment',
+  synchronize: false,
+  logging: false,
+  entities: [DataModel],
 });
 
 module.exports = AppDataSource;
